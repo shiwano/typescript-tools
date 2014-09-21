@@ -207,11 +207,12 @@ function! TSScompleteFunc(findstart,base)
 
   " search backwards for start of identifier (iskeyword pattern)
   let start = col
-  while start>0 && line[start-2] =~ "\\k"
-    let start -= 1
-  endwhile
 
   if a:findstart
+    while start>0 && line[start-2] =~ "\\k"
+      let start -= 1
+    endwhile
+
     if TSSstatus()!="None"
       py vim.command('echoerr "'+TSS_NOT_RUNNING_MSG+'"')
     endif
@@ -223,6 +224,8 @@ function! TSScompleteFunc(findstart,base)
     "return line[start-1] =~ "\\k" ? start-1 : -1
     return start-1
   else
+    let start += 1
+
     " check if preceded by dot (won't see dot on previous line!)
     let member = (start>1 && line[start-2]==".") ? 'true' : 'false'
     echomsg start.":".member
